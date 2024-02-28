@@ -6,17 +6,15 @@ const opts: RouteShorthandOptions = {
     response: {
       200: {
         type: "object",
-        properties: {
-          pong: {
-            type: "string",
-          },
-        },
       },
     },
   },
 };
 
 async function routes(fastify: FastifyInstance) {
+  fastify.get("/", async (req, reply) => {
+    return reply.code(200).send({ message: "hello auth" });
+  });
   fastify.post("/login", async (req, reply) => {
     // Authenticate user (compare against database or external auth provider)
     const { username, password } = req.body as any;

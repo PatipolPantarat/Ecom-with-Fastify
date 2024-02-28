@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import fastifyJwt, { FastifyJWTOptions } from "@fastify/jwt";
-import authRoutes from "./routes";
+import authRoutes from "./auth.routes";
 
 const authServer = fastify();
 

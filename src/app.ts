@@ -1,13 +1,15 @@
 import fastify, { FastifyInstance } from "fastify";
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUi from "@fastify/swagger-ui";
-// import authRoutes from "./auth/auth.routes";
+import authRoutes from "./services/auth/auth.routes";
 // import userRoutes from "./user/routes";
 import productRoutes from "./services/product/product.routes";
 
 const server: FastifyInstance = fastify({});
 
-server.register(fastifySwagger, {
+server.register(require("@fastify/jwt"), {
+  secret: "your-strong-secret",
+});
+server.register(require("@fastify/cors"));
+server.register(require("@fastify/swagger"), {
   swagger: {
     info: {
       title: "Ecom API",
@@ -21,14 +23,15 @@ server.register(fastifySwagger, {
 });
 
 // Register Swagger UI
-server.register(fastifySwaggerUi, {
+server.register(require("@fastify/swagger-ui"), {
   routePrefix: "/api-docs",
 });
 
 // Register service routes
-// server.register(authRoutes, { prefix: "/api/v1/auth" });
+server.register(authRoutes, { prefix: "/api/v1/auth" });
 // server.register(userRoutes, { prefix: "/users" });
 server.register(productRoutes, { prefix: "/api/v1/products" });
+
 const start = async () => {
   try {
     await server.ready();

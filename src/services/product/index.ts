@@ -1,7 +1,6 @@
 import fastify from "fastify";
 import fastifyJwt from "@fastify/jwt";
 import productRoutes from "./product.routes";
-
 const productServer = fastify();
 
 productServer.register(fastifyJwt, {

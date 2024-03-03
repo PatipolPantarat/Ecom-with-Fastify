@@ -8,10 +8,19 @@ export const getProductsSchema = {
         items: {
           type: "object",
           properties: {
-            id: { type: "number" },
+            _id: { type: "string" },
             name: { type: "string" },
             description: { type: "string" },
             price: { type: "number" },
+            category: {
+              type: "string",
+            },
+            stock: { type: "number" },
+            image: { type: "string" },
+            status: { type: "string" },
+            createdAt: { type: "string" },
+            updatedAt: { type: "string" },
+            isDeleted: { type: "boolean" },
           },
         },
       },
@@ -27,10 +36,19 @@ export const getProductSchema = {
       200: {
         type: "object",
         properties: {
-          id: { type: "number" },
+          _id: { type: "string" },
           name: { type: "string" },
           description: { type: "string" },
           price: { type: "number" },
+          category: {
+            type: "string",
+          },
+          stock: { type: "number" },
+          image: { type: "string" },
+          status: { type: "string" },
+          createdAt: { type: "string" },
+          updatedAt: { type: "string" },
+          isDeleted: { type: "boolean" },
         },
       },
     },
@@ -43,21 +61,36 @@ export const createProductSchema = {
     tags: ["Product"],
     body: {
       type: "object",
-      required: ["name", "description", "price"],
+      required: ["name", "description", "price", "category", "stock", "image"],
       properties: {
         name: { type: "string" },
         description: { type: "string" },
         price: { type: "number" },
+        category: {
+          type: "string",
+        },
+        stock: { type: "number" },
+        image: { type: "string" },
+        status: { type: "string" },
       },
     },
     response: {
       201: {
         type: "object",
         properties: {
-          id: { type: "number" },
+          _id: { type: "string" },
           name: { type: "string" },
           description: { type: "string" },
           price: { type: "number" },
+          category: {
+            type: "string",
+          },
+          stock: { type: "number" },
+          image: { type: "string" },
+          status: { type: "string" },
+          createdAt: { type: "string" },
+          updatedAt: { type: "string" },
+          isDeleted: { type: "boolean" },
         },
       },
     },
@@ -70,21 +103,27 @@ export const updateProductSchema = {
     tags: ["Product"],
     body: {
       type: "object",
-      required: ["name", "description", "price"],
       properties: {
+        _id: { type: "string" },
         name: { type: "string" },
         description: { type: "string" },
         price: { type: "number" },
+        category: {
+          type: "string",
+        },
+        stock: { type: "number" },
+        image: { type: "string" },
+        status: { type: "string" },
+        createdAt: { type: "string" },
+        updatedAt: { type: "string" },
+        isDeleted: { type: "boolean" },
       },
     },
     response: {
       200: {
         type: "object",
         properties: {
-          id: { type: "number" },
-          name: { type: "string" },
-          description: { type: "string" },
-          price: { type: "number" },
+          message: { type: "string" },
         },
       },
     },
@@ -99,10 +138,7 @@ export const deleteProductSchema = {
       200: {
         type: "object",
         properties: {
-          id: { type: "number" },
-          name: { type: "string" },
-          description: { type: "string" },
-          price: { type: "number" },
+          message: { type: "string" },
         },
       },
     },

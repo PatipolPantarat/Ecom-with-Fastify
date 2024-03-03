@@ -1,12 +1,16 @@
-import fp from "fastify-plugin";
-import mongoose from "@fastify/mongoose";
+import fb from "fastify-plugin";
+import mongoose from "mongoose";
 
-export default fp<mongoose.MongooseOptions>(async (fastify, opts) => {
-  await fastify.register(mongoose, {
-    url: "mongodb://localhost:27017/your_database_name", // Replace with your connection string
-    ...opts,
-  });
+export default fb(async (fastify, opts) => {
+  const db = await mongoose
+    .connect(process.env.MONGODB_URI!, {
+      dbName: "Ecom_DB",
+    })
+    .then((conn) => {
+      console.log("Database connected");
+      return conn;
+    })
+    .catch(console.error);
 
-  // Use this in your routes to access your model
-  fastify.decorate("db", { models: { User: fastify.mongoose.model("User") } });
+  if (!db) throw new Error("Database not connected");
 });

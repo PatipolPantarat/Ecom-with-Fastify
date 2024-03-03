@@ -1,14 +1,26 @@
 import fastify, { FastifyInstance } from "fastify";
+import dotenv from "dotenv";
+dotenv.config();
+import connectDB from "./plugins/database";
+
+// Import service routes
 import authRoutes from "./services/auth/auth.routes";
-// import userRoutes from "./user/routes";
 import productRoutes from "./services/product/product.routes";
+// import userRoutes from "./user/routes";
+// import testRoutes from "./services/test/test.routes";
 
 const server: FastifyInstance = fastify({});
-
+server.register(connectDB);
+server.register(require("@fastify/mongodb"), {
+  forceClose: true,
+  url: process.env.MONGODB_URI,
+});
 server.register(require("@fastify/jwt"), {
   secret: "your-strong-secret",
 });
 server.register(require("@fastify/cors"));
+
+// Register Swagger UI
 server.register(require("@fastify/swagger"), {
   swagger: {
     info: {
@@ -21,16 +33,15 @@ server.register(require("@fastify/swagger"), {
     produces: ["application/json"],
   },
 });
-
-// Register Swagger UI
 server.register(require("@fastify/swagger-ui"), {
   routePrefix: "/api-docs",
 });
 
 // Register service routes
-server.register(authRoutes, { prefix: "/api/v1/auth" });
-// server.register(userRoutes, { prefix: "/users" });
+// server.register(testRoutes, { prefix: "/api/v1/test" });
+// server.register(authRoutes, { prefix: "/api/v1/auth" });
 server.register(productRoutes, { prefix: "/api/v1/products" });
+// server.register(userRoutes, { prefix: "/users" });
 
 const start = async () => {
   try {

@@ -2,6 +2,7 @@ import fb from "fastify-plugin";
 import mongoose from "mongoose";
 
 export default fb(async (fastify, opts) => {
+  console.log("Database connecting...");
   const db = await mongoose
     .connect(process.env.MONGODB_URI!, {
       dbName: "Ecom_DB",

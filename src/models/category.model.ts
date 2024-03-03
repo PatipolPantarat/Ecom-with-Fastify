@@ -3,7 +3,12 @@ import { ICategory } from "../utils/interfaces";
 
 const categorySchema: Schema = new mongoose.Schema({
   name: { type: String, required: true },
-  status: { enum: ["active", "inactive"], required: true, default: "active" },
+  status: {
+    type: String,
+    enum: ["active", "inactive"],
+    required: true,
+    default: "active",
+  },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
   isDeleted: { type: Boolean, default: false },

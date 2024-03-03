@@ -4,7 +4,12 @@ import { IUser } from "../utils/interfaces";
 const userSchema: Schema = new mongoose.Schema({
   email: { type: String, required: true },
   password: { type: String, required: true },
-  role: { enum: ["admin", "user"], required: true, default: "user" },
+  role: {
+    type: String,
+    enum: ["admin", "user"],
+    default: "user",
+    required: true,
+  },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
   isDeleted: { type: Boolean, default: false },

@@ -39,7 +39,6 @@ export async function getProduct(
 ) {
   try {
     const product = await ProductModel.findById(request.params.id);
-    console.log("product: ", product);
     return reply.code(200).send(product);
   } catch (err) {
     reply.code(500).send({ error: "Failed to fetch product" });
@@ -52,7 +51,6 @@ export async function createProduct(
 ) {
   const newProduct = new ProductModel(request.body);
   await ProductModel.create(newProduct);
-  console.log("newProduct: ", newProduct);
   return reply.code(201).send(newProduct);
 }
 
@@ -61,10 +59,7 @@ export async function updateProduct(
   reply: FastifyReply
 ) {
   try {
-    const updatedProduct = await ProductModel.findByIdAndUpdate(
-      request.params.id,
-      request.body
-    );
+    await ProductModel.findByIdAndUpdate(request.params.id, request.body);
     return reply.code(200).send({
       message: "Product updated successfully",
     });

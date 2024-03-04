@@ -1,7 +1,7 @@
 import { Document } from "mongoose";
 
 export interface IProduct extends Document {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   price: number;
@@ -15,7 +15,7 @@ export interface IProduct extends Document {
 }
 
 export interface IUser extends Document {
-  id: string;
+  _id: string;
   email: string;
   password: string;
   role: string;
@@ -25,8 +25,23 @@ export interface IUser extends Document {
 }
 
 export interface ICategory extends Document {
-  id: string;
+  _id: string;
   name: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  isDeleted: boolean;
+}
+
+export interface IOrder extends Document {
+  _id: string;
+  userId: string;
+  products: {
+    productId: string;
+    quantity: number;
+    price: number;
+  }[];
+  total_price: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;

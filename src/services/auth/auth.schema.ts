@@ -1,22 +1,3 @@
-export const getUsersSchema = {
-  schema: {
-    tags: ["Auth"],
-    description: "Get a list of users",
-    response: {
-      200: {
-        type: "array",
-        items: {
-          type: "object",
-          properties: {
-            email: { type: "string" },
-            password: { type: "string" },
-          },
-        },
-      },
-    },
-  },
-};
-
 export const loginSchema = {
   schema: {
     tags: ["Auth"],
@@ -33,6 +14,7 @@ export const loginSchema = {
       200: {
         type: "object",
         properties: {
+          message: { type: "string" },
           token: { type: "string" },
         },
       },
@@ -56,7 +38,7 @@ export const registerSchema = {
       200: {
         type: "object",
         properties: {
-          token: { type: "string" },
+          message: { type: "string" },
         },
       },
     },

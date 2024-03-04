@@ -1,7 +1,7 @@
-export const getUsersSchema = {
+export const getCategoriesSchema = {
   schema: {
-    description: "Get a list of users",
-    tags: ["User"],
+    tags: ["Category"],
+    description: "Get a list of categories",
     response: {
       200: {
         type: "array",
@@ -9,8 +9,8 @@ export const getUsersSchema = {
           type: "object",
           properties: {
             _id: { type: "string" },
-            email: { type: "string" },
-            role: { type: "string" },
+            name: { type: "string" },
+            status: { type: "string" },
             createdAt: { type: "string" },
             updatedAt: { type: "string" },
             isDeleted: { type: "boolean" },
@@ -20,17 +20,18 @@ export const getUsersSchema = {
     },
   },
 };
-export const getUserSchema = {
+
+export const getCategorySchema = {
   schema: {
-    description: "Get a list of users",
-    tags: ["User"],
+    tags: ["Category"],
+    description: "Get a single category",
     response: {
       200: {
         type: "object",
         properties: {
           _id: { type: "string" },
-          email: { type: "string" },
-          role: { type: "string" },
+          name: { type: "string" },
+          status: { type: "string" },
           createdAt: { type: "string" },
           updatedAt: { type: "string" },
           isDeleted: { type: "boolean" },
@@ -39,17 +40,45 @@ export const getUserSchema = {
     },
   },
 };
-export const createUserSchema = {
+
+export const createCategorySchema = {
   schema: {
-    description: "Create a new user",
-    tags: ["User"],
+    tags: ["Category"],
+    description: "Create a new category",
     body: {
       type: "object",
-      required: ["email", "password", "role"],
       properties: {
-        email: { type: "string" },
-        password: { type: "string" },
-        role: { type: "string" },
+        name: { type: "string" },
+        status: { type: "string" },
+      },
+      required: ["name", "status"],
+    },
+    response: {
+      201: {
+        type: "object",
+        properties: {
+          _id: { type: "string" },
+          name: { type: "string" },
+          status: { type: "string" },
+          createdAt: { type: "string" },
+          updatedAt: { type: "string" },
+          isDeleted: { type: "boolean" },
+        },
+      },
+    },
+  },
+};
+
+export const updateCategorySchema = {
+  schema: {
+    tags: ["Category"],
+    description: "Update a category",
+    body: {
+      type: "object",
+      properties: {
+        _id: { type: "string" },
+        name: { type: "string" },
+        status: { type: "string" },
       },
     },
     response: {
@@ -63,32 +92,10 @@ export const createUserSchema = {
   },
 };
 
-// can update role only
-export const updateUserSchema = {
+export const deleteCategorySchema = {
   schema: {
-    description: "Update a user",
-    tags: ["User"],
-    body: {
-      type: "object",
-      properties: {
-        role: { type: "string" },
-      },
-    },
-    response: {
-      200: {
-        type: "object",
-        properties: {
-          message: { type: "string" },
-        },
-      },
-    },
-  },
-};
-
-export const deleteUserSchema = {
-  schema: {
-    tags: ["User"],
-    description: "Delete a user",
+    tags: ["Category"],
+    description: "Delete a category",
     response: {
       200: {
         type: "object",

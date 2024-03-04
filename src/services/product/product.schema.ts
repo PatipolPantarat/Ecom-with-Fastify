@@ -1,7 +1,7 @@
 export const getProductsSchema = {
   schema: {
-    description: "Get a list of products",
     tags: ["Product"],
+    description: "Get a list of products",
     response: {
       200: {
         type: "array",
@@ -30,8 +30,8 @@ export const getProductsSchema = {
 
 export const getProductSchema = {
   schema: {
-    description: "Get a single product",
     tags: ["Product"],
+    description: "Get a single product",
     response: {
       200: {
         type: "object",
@@ -57,8 +57,8 @@ export const getProductSchema = {
 
 export const createProductSchema = {
   schema: {
-    description: "Create a new product",
     tags: ["Product"],
+    description: "Create a new product",
     body: {
       type: "object",
       required: ["name", "description", "price", "category", "stock", "image"],
@@ -99,8 +99,8 @@ export const createProductSchema = {
 
 export const updateProductSchema = {
   schema: {
-    description: "Update a product",
     tags: ["Product"],
+    description: "Update a product",
     body: {
       type: "object",
       properties: {
@@ -114,9 +114,6 @@ export const updateProductSchema = {
         stock: { type: "number" },
         image: { type: "string" },
         status: { type: "string" },
-        createdAt: { type: "string" },
-        updatedAt: { type: "string" },
-        isDeleted: { type: "boolean" },
       },
     },
     response: {
@@ -132,8 +129,8 @@ export const updateProductSchema = {
 
 export const deleteProductSchema = {
   schema: {
-    description: "Delete a product",
     tags: ["Product"],
+    description: "Delete a product",
     response: {
       200: {
         type: "object",

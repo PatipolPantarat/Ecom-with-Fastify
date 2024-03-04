@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { IUser } from "../../utils/interfaces";
 import { UserModel } from "../../models/user.model";
+import { hashPassword, comparePassword } from "../../utils/bcrypt";
 
 export async function getUsersController(
   request: FastifyRequest,
@@ -15,7 +16,7 @@ export async function getUsersController(
 }
 
 export async function getUserController(
-  request: FastifyRequest<{ Params: { id: number } }>,
+  request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
   try {
@@ -30,17 +31,32 @@ export async function createUserController(
   request: FastifyRequest<{ Body: IUser }>,
   reply: FastifyReply
 ) {
+  const { email, password, role } = request.body;
+  if (!email || !password) {
+    return reply.code(400).send({ error: "Email and password are required" });
+  }
+  if (await UserModel.findOne({ email })) {
+    return reply.code(409).send({ error: "User already exists" });
+  }
+  if (password.length < 6) {
+    return reply.code(400).send({ error: "Password is too short" });
+  }
+  const hashedPassword = await hashPassword(password);
   try {
-    const user = new UserModel(request.body);
-    await UserModel.create(user);
-    return reply.code(201).send(user);
+    const newUser = new UserModel({
+      email,
+      password: hashedPassword,
+      role,
+    });
+    await UserModel.create(newUser);
+    return reply.code(201).send({ message: "User created successfully" });
   } catch (err) {
     reply.code(500).send({ error: "Failed to create user", err });
   }
 }
 
 export async function updateUserController(
-  request: FastifyRequest<{ Params: { id: number }; Body: IUser }>,
+  request: FastifyRequest<{ Params: { id: string }; Body: IUser }>,
   reply: FastifyReply
 ) {
   try {
@@ -54,7 +70,7 @@ export async function updateUserController(
 }
 
 export async function deleteUserController(
-  request: FastifyRequest<{ Params: { id: number } }>,
+  request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
   try {

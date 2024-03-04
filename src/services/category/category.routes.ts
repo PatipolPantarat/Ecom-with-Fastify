@@ -24,8 +24,8 @@ async function routes(fastify: FastifyInstance) {
   // POST /categories - Create a new category
   fastify.post("/", createCategorySchema, createCategoryController);
 
-  // PUT /categories/:id - Update a category
-  fastify.put("/:id", updateCategorySchema, updateCategoryController);
+  // PATCH /categories/:id - Update a category
+  fastify.patch("/:id", updateCategorySchema, updateCategoryController);
 
   // DELETE /categories/:id - Delete a category
   fastify.delete("/:id", deleteCategorySchema, deleteCategoryController);

@@ -34,13 +34,13 @@ async function routes(fastify: FastifyInstance) {
   // GET /products/:id - Get a single product
   fastify.get("/:id", getProductSchema, getProduct);
 
-  // // POST /products - Create a new product
+  // POST /products - Create a new product
   fastify.post("/", createProductSchema, createProduct);
 
-  // // PUT /products/:id - Update a product
-  fastify.put("/:id", updateProductSchema, updateProduct);
+  // PATCH /products/:id - Update a product
+  fastify.patch("/:id", updateProductSchema, updateProduct);
 
-  // // DELETE /products/:id - Delete a product
+  // DELETE /products/:id - Delete a product
   fastify.delete("/:id", deleteProductSchema, deleteProduct);
 }
 

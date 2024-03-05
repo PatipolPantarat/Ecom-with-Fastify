@@ -14,8 +14,6 @@ import {
   deleteUserController,
 } from "./user.controller";
 
-import { generateToken } from "../../utils/jwt";
-
 async function routes(fastify: FastifyInstance) {
   // GET /users - List all users
   fastify.get("/", getUsersSchema, getUsersController);

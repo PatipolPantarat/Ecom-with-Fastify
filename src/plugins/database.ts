@@ -1,15 +1,15 @@
 import fb from "fastify-plugin";
-import mongoose from "mongoose";
 import { logger } from "../utils/logger";
+import mongoose from "mongoose";
 
 export default fb(async (fastify, opts) => {
-  logger.info("Database connecting...");
+  logger.info("Plugins: DB connecting...");
   const db = await mongoose
     .connect(process.env.MONGODB_LOCALHOST!, {
       dbName: "Ecom_DB",
     })
     .then((conn) => {
-      logger.info("Database connected");
+      logger.info("DB connected");
       return conn;
     })
     .catch((err) => {

@@ -31,10 +31,12 @@ export async function createUserController(
   request: FastifyRequest<{ Body: IUser }>,
   reply: FastifyReply
 ) {
+  // Validate request body
   const { email, password, role } = request.body;
   if (!email || !password) {
     return reply.code(400).send({ error: "Email and password are required" });
   }
+  // Check if user already exists
   if (await UserModel.findOne({ email })) {
     return reply.code(409).send({ error: "User already exists" });
   }
@@ -44,7 +46,7 @@ export async function createUserController(
   const hashedPassword = await hashPassword(password);
   try {
     const newUser = new UserModel({
-      email,
+      email: email.toLowerCase(),
       password: hashedPassword,
       role,
     });

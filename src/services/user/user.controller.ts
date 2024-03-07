@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { IUser } from "../../utils/interfaces";
 import { UserModel } from "../../models/user.model";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
+import { logger } from "../../utils/logger";
 
 export async function getUsersController(
   request: FastifyRequest,
@@ -28,33 +29,30 @@ export async function getUserController(
 }
 
 export async function createUserController(
-  request: FastifyRequest<{ Body: IUser }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
-  // Validate request body
-  const { email, password, role } = request.body;
-  if (!email || !password) {
-    return reply.code(400).send({ error: "Email and password are required" });
-  }
+  const reqBody = request.body;
+  console.log(reqBody);
   // Check if user already exists
-  if (await UserModel.findOne({ email })) {
-    return reply.code(409).send({ error: "User already exists" });
-  }
-  if (password.length < 6) {
-    return reply.code(400).send({ error: "Password is too short" });
-  }
-  const hashedPassword = await hashPassword(password);
-  try {
-    const newUser = new UserModel({
-      email: email.toLowerCase(),
-      password: hashedPassword,
-      role,
-    });
-    await UserModel.create(newUser);
-    return reply.code(201).send({ message: "User created successfully" });
-  } catch (err) {
-    reply.code(500).send({ error: "Failed to create user", err });
-  }
+  // if (await UserModel.findOne({ email })) {
+  //   return reply.code(409).send({ error: "User already exists" });
+  // }
+  // if (password.length < 6) {
+  //   return reply.code(400).send({ error: "Password is too short" });
+  // }
+  // const hashedPassword = await hashPassword(password);
+  // try {
+  //   const newUser = new UserModel({
+  //     email: email.toLowerCase(),
+  //     password: hashedPassword,
+  //     role,
+  //   });
+  //   await UserModel.create(newUser);
+  //   return reply.code(201).send({ message: "User created successfully" });
+  // } catch (err) {
+  //   reply.code(500).send({ error: "Failed to create user", err });
+  // }
 }
 
 export async function updateUserController(

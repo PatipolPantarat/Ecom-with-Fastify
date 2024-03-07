@@ -7,6 +7,7 @@ export interface IProduct extends Document {
   price: number;
   category: string;
   stock: number;
+  sold: number;
   image: string;
   status: string;
   createdAt: Date;
@@ -16,9 +17,28 @@ export interface IProduct extends Document {
 
 export interface IUser extends Document {
   _id: string;
-  email: string;
-  password: string;
-  role: string;
+  userProfile: {
+    email: string;
+    password: string;
+    role: string;
+    fullName: string;
+    phoneNumber: string;
+    imageUrl: string;
+    birthDate: Date;
+  };
+  userAddresses: {
+    address: string;
+    province: string;
+    district: string;
+    subdistrict: string;
+    zipCode: string;
+  }[];
+  userFavorites: string[];
+  userCarts: {
+    productId: string;
+    quantity: number;
+  }[];
+  userOrders: string[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;

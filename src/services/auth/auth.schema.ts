@@ -1,3 +1,4 @@
+import joi, { required } from "joi";
 export const loginSchema = {
   schema: {
     tags: ["Auth"],

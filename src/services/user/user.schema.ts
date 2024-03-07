@@ -1,3 +1,4 @@
+import joi from "joi";
 export const getUsersSchema = {
   schema: {
     description: "Get a list of users",

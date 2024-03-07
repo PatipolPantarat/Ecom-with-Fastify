@@ -8,19 +8,31 @@ import {
   generateRandomPassword,
   sendResetPassword,
 } from "../../utils/nodemailer";
+import registerJoiSchema from "../../schema/auth/register.validate";
+import loginJoiSchema from "../../schema/auth/login.validate";
+import resetJoiSchema from "../../schema/auth/reset.validate";
+import { changePasswordSchema } from "./auth.schema";
+import changeJoiSchema from "../../schema/auth/change.validate";
 
 export async function loginController(
-  request: FastifyRequest<{ Body: IUser }>,
+  request: FastifyRequest<{ Body: { email: string; password: string } }>,
   reply: FastifyReply
 ) {
-  const { email, password } = request.body;
+  // Validate request body
+  const { value, error } = loginJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  const { email, password } = value;
   const lowerEmail = email.toLowerCase();
   try {
-    const user = await UserModel.findOne({ email: lowerEmail });
+    const user = await UserModel.findOne({
+      "userProfile.email": lowerEmail,
+    });
     if (!user) {
       return reply.code(401).send({ error: "user not found" });
     }
-    const isMatch = await comparePassword(password, user.password);
+    const isMatch = await comparePassword(password, user.userProfile.password);
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid password" });
     }
@@ -32,13 +44,20 @@ export async function loginController(
 }
 
 export async function registerController(
-  request: FastifyRequest<{ Body: IUser }>,
+  request: FastifyRequest<{ Body: { email: string; password: string } }>,
   reply: FastifyReply
 ) {
-  const { email, password } = request.body;
+  // Validate request body
+  const { value, error } = registerJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  console.log(value);
+  const { email, password } = value;
   const lowerEmail = email.toLowerCase();
+
   // Check if user already exists
-  const user = await UserModel.findOne({ email: lowerEmail });
+  const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
   if (user) {
     return reply.code(409).send({ error: "User already exists" });
   }
@@ -48,9 +67,11 @@ export async function registerController(
   const hashedPassword = await hashPassword(password);
   try {
     const newUser = new UserModel({
-      email: lowerEmail,
-      password: hashedPassword,
-      role: "user",
+      userProfile: {
+        email: lowerEmail,
+        password: hashedPassword,
+        role: "user",
+      },
     });
     await UserModel.create(newUser);
     return reply.code(201).send({ message: "Registration successful" });
@@ -63,11 +84,16 @@ export async function resetPasswordController(
   request: FastifyRequest<{ Body: { email: string } }>,
   reply: FastifyReply
 ) {
-  const { email } = request.body;
+  // Validate request body
+  const { value, error } = resetJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  const { email } = value;
   const lowerEmail = email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ email: lowerEmail });
+    const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
@@ -76,7 +102,7 @@ export async function resetPasswordController(
     // Send email with random password
     await sendResetPassword(lowerEmail, randomPassword);
     // Update user's password
-    user.password = await hashPassword(randomPassword);
+    user.userProfile.password = await hashPassword(randomPassword);
     await user.save();
     // Return success message
     return reply.code(200).send({
@@ -93,21 +119,29 @@ export async function changePasswordController(
   }>,
   reply: FastifyReply
 ) {
-  const { email, oldPassword, newPassword } = request.body;
+  // Validate request body
+  const { value, error } = changeJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  const { email, oldPassword, newPassword } = value;
   const lowerEmail = email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ email: lowerEmail });
+    const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
     // Compare old password
-    const isMatch = await comparePassword(oldPassword, user.password);
+    const isMatch = await comparePassword(
+      oldPassword,
+      user.userProfile.password
+    );
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid old password" });
     }
     // Update user's password
-    user.password = await hashPassword(newPassword);
+    user.userProfile.password = await hashPassword(newPassword);
     await user.save();
     // Return success message
     return reply.code(200).send({

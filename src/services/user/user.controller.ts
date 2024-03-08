@@ -29,30 +29,32 @@ export async function getUserController(
 }
 
 export async function createUserController(
-  request: FastifyRequest,
+  request: FastifyRequest<{
+    Body: { email: string; password: string; role: string };
+  }>,
   reply: FastifyReply
 ) {
-  const reqBody = request.body;
-  console.log(reqBody);
+  const { email, password, role } = request.body;
+  const lowerEmail = email.toLowerCase();
   // Check if user already exists
-  // if (await UserModel.findOne({ email })) {
-  //   return reply.code(409).send({ error: "User already exists" });
-  // }
-  // if (password.length < 6) {
-  //   return reply.code(400).send({ error: "Password is too short" });
-  // }
-  // const hashedPassword = await hashPassword(password);
-  // try {
-  //   const newUser = new UserModel({
-  //     email: email.toLowerCase(),
-  //     password: hashedPassword,
-  //     role,
-  //   });
-  //   await UserModel.create(newUser);
-  //   return reply.code(201).send({ message: "User created successfully" });
-  // } catch (err) {
-  //   reply.code(500).send({ error: "Failed to create user", err });
-  // }
+  if (await UserModel.findOne({ lowerEmail })) {
+    return reply.code(409).send({ error: "User already exists" });
+  }
+  if (password.length < 6) {
+    return reply.code(400).send({ error: "Password is too short" });
+  }
+  const hashedPassword = await hashPassword(password);
+  const newUser = new UserModel({
+    email: lowerEmail,
+    password: hashedPassword,
+    role: role.toLowerCase(),
+  });
+  try {
+    await UserModel.create(newUser);
+    return reply.code(201).send({ message: "User created successfully" });
+  } catch (err) {
+    reply.code(500).send({ error: "Failed to create user", err });
+  }
 }
 
 export async function updateUserController(

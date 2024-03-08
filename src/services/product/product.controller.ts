@@ -49,6 +49,7 @@ export async function createProduct(
   // Create new product
   try {
     const newProduct = new ProductModel(value);
+    console.log("newProduct: ", newProduct);
     await ProductModel.create(newProduct);
     return reply.code(201).send(newProduct);
   } catch (err) {

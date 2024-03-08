@@ -47,35 +47,41 @@ export async function registerController(
   request: FastifyRequest<{ Body: { email: string; password: string } }>,
   reply: FastifyReply
 ) {
-  // Validate request body
-  const { value, error } = registerJoiSchema.validate(request.body);
-  if (error) {
-    return reply.code(400).send({ error: error.details[0].message });
-  }
-  console.log(value);
-  const { email, password } = value;
-  const lowerEmail = email.toLowerCase();
-
-  // Check if user already exists
-  const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
-  if (user) {
-    return reply.code(409).send({ error: "User already exists" });
-  }
-  if (password.length < 6) {
-    return reply.code(400).send({ error: "Password is too short" });
-  }
-  const hashedPassword = await hashPassword(password);
   try {
+    // Validate request body
+    const { value, error } = registerJoiSchema.validate(request.body);
+    if (error) {
+      return reply.code(400).send({ error: error.details[0].message });
+    }
+    value.email = value.email.toLowerCase();
+    console.log("value: ", value);
+
+    // Check if user already exists
+    // const user = await UserModel.findOne({ email: value.email });
+    // if (user) {
+    //   return reply.code(409).send({ error: "User already exists" });
+    // }
+
+    // Hash password
+    const hashedPassword = await hashPassword(value.password);
+
+    // Create new user
     const newUser = new UserModel({
-      userProfile: {
-        email: lowerEmail,
-        password: hashedPassword,
-        role: "user",
-      },
+      // userProfile: {
+      email: value.email,
+      password: hashedPassword,
+      role: "user",
+      // },
     });
-    await UserModel.create(newUser);
+    await newUser.save();
+    // await UserModel.create(newUser);
     return reply.code(201).send({ message: "Registration successful" });
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 11000) {
+      if (err.keyPattern.email) {
+        return reply.code(409).send({ error: "Email นี้ถูกใช้งานแล้ว" });
+      }
+    }
     reply.code(500).send({ error: "Registration failed", err });
   }
 }

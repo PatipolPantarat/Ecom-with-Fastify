@@ -18,56 +18,56 @@ import { IUser } from "../utils/interfaces";
 //   isDeleted: { type: Boolean, default: false },
 // });
 const userSchema: Schema = new mongoose.Schema({
-  userProfile: {
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: {
-      type: String,
-      enum: ["admin", "user"],
-      default: "user",
-      required: true,
-    },
-    fullName: { type: String },
-    phoneNumber: { type: String },
-    imageUrl: { type: String },
-    birthDate: { type: Date },
+  // userProfile: {
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true, minlength: 6 },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
   },
-  userAddresses: [
-    {
-      address: { type: String },
-      province: { type: String },
-      district: { type: String },
-      subdistrict: { type: String },
-      zipCode: { type: String },
-    },
-  ],
-  userFavorites: [
-    {
-      // type: mongoose.Schema.Types.ObjectId,
-      type: String,
-      ref: "Product",
-    },
-  ],
-  userCarts: [
-    {
-      productId: {
-        // type: mongoose.Schema.Types.ObjectId,
-        type: String,
-        ref: "Product",
-      },
-      quantity: { type: Number },
-    },
-  ],
-  userOrders: [
-    {
-      // type: mongoose.Schema.Types.ObjectId,
-      type: String,
-      ref: "Order",
-    },
-  ],
-  createdAt: { type: Date, default: Date.now() },
-  updatedAt: { type: Date, default: Date.now() },
-  isDeleted: { type: Boolean, default: false },
+  // fullName: { type: String, default: "default" },
+  // phoneNumber: { type: String, default: "default" },
+  // imageUrl: { type: String, default: "default" },
+  // birthDate: { type: Date, default: Date.now() },
+  // },
+  // userAddresses: [
+  //   {
+  //     id: { type: String },
+  //     address: { type: String },
+  //     province: { type: String },
+  //     district: { type: String },
+  //     subdistrict: { type: String },
+  //     zipCode: { type: String },
+  //   },
+  // ],
+  // userFavorites: [
+  //   {
+  //     // type: mongoose.Schema.Types.ObjectId,
+  //     type: String,
+  //     ref: "Product",
+  //   },
+  // ],
+  // userCarts: [
+  //   {
+  //     productId: {
+  //       // type: mongoose.Schema.Types.ObjectId,
+  //       type: String,
+  //       ref: "Product",
+  //     },
+  //     quantity: { type: Number },
+  //   },
+  // ],
+  // userOrders: [
+  //   {
+  //     // type: mongoose.Schema.Types.ObjectId,
+  //     type: String,
+  //     ref: "Order",
+  //   },
+  // ],
+  // createdAt: { type: Date, default: Date.now() },
+  // updatedAt: { type: Date, default: Date.now() },
+  // isDeleted: { type: Boolean, default: false },
 });
 
 export const UserModel = mongoose.model<IUser>("User", userSchema);

@@ -1,8 +1,8 @@
-import fastify, { FastifyInstance } from "fastify";
+import Fastify, { FastifyInstance } from "fastify";
 import dotenv from "dotenv";
 dotenv.config();
-import connectDB from "./plugins/database";
 import { logger } from "./utils/logger";
+import fastifyPlugins from "./plugins/plugins";
 
 // Import service routes
 import userRoutes from "./services/user/user.routes";
@@ -11,30 +11,9 @@ import categoryRoutes from "./services/category/category.routes";
 import authRoutes from "./services/auth/auth.routes";
 import orderRoutes from "./services/order/order.routes";
 
-const server: FastifyInstance = fastify();
+const server: FastifyInstance = Fastify();
 
-server.register(connectDB);
-server.register(require("@fastify/jwt"), {
-  secret: process.env.JWT_SECRET,
-});
-server.register(require("@fastify/cors"));
-
-// Register Swagger UI
-server.register(require("@fastify/swagger"), {
-  swagger: {
-    info: {
-      title: "Ecom API",
-      description: "Ecom API with Fastify",
-      version: "0.1.0",
-    },
-    schemes: ["http"],
-    consumes: ["application/json"],
-    produces: ["application/json"],
-  },
-});
-server.register(require("@fastify/swagger-ui"), {
-  routePrefix: "/api-docs",
-});
+server.register(fastifyPlugins);
 
 // Register service routes
 server.register(authRoutes, { prefix: "/api/v1/auth" });

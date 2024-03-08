@@ -1,8 +1,12 @@
-import fb from "fastify-plugin";
+import fastifyPlugin from "fastify-plugin";
 import { logger } from "../utils/logger";
 import mongoose from "mongoose";
 
-export default fb(async (fastify, opts) => {
+// async function dbConnector(fastify: FastifyInstance, opts: any) {
+//   fastify.decorate("db", mongoose);
+// }
+
+async function dbConnector() {
   logger.info("Plugins: DB connecting...");
   const db = await mongoose
     .connect(process.env.MONGODB_LOCALHOST!, {
@@ -17,4 +21,5 @@ export default fb(async (fastify, opts) => {
     });
 
   if (!db) logger.info("Database not connected");
-});
+}
+export default fastifyPlugin(dbConnector);

@@ -1,4 +1,3 @@
-import joi from "joi";
 export const getUsersSchema = {
   schema: {
     description: "Get a list of users",
@@ -12,6 +11,11 @@ export const getUsersSchema = {
             _id: { type: "string" },
             email: { type: "string" },
             role: { type: "string" },
+            fullName: { type: "string" },
+            phoneNumber: { type: "string" },
+            imageUrl: { type: "string" },
+            birthDate: { type: "string" },
+            addresses: { type: "array" },
             createdAt: { type: "string" },
             updatedAt: { type: "string" },
             isDeleted: { type: "boolean" },
@@ -32,6 +36,11 @@ export const getUserSchema = {
           _id: { type: "string" },
           email: { type: "string" },
           role: { type: "string" },
+          fullName: { type: "string" },
+          phoneNumber: { type: "string" },
+          imageUrl: { type: "string" },
+          birthDate: { type: "string" },
+          addresses: { type: "array" },
           createdAt: { type: "string" },
           updatedAt: { type: "string" },
           isDeleted: { type: "boolean" },

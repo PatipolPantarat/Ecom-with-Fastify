@@ -3,6 +3,7 @@ import { IUser } from "../../utils/interfaces";
 import { UserModel } from "../../models/user.model";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import { logger } from "../../utils/logger";
+import createUserJoiSchema from "../../schema/user/create.validate";
 
 export async function getUsersController(
   request: FastifyRequest,
@@ -34,22 +35,29 @@ export async function createUserController(
   }>,
   reply: FastifyReply
 ) {
-  const { email, password, role } = request.body;
-  const lowerEmail = email.toLowerCase();
+  // Validate request body
+  const { value, error } = createUserJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  value.email = value.email.toLowerCase();
   // Check if user already exists
-  if (await UserModel.findOne({ lowerEmail })) {
+  if (await UserModel.findOne({ "userProfile.email": value.email })) {
     return reply.code(409).send({ error: "User already exists" });
   }
-  if (password.length < 6) {
+  if (value.password.length < 6) {
     return reply.code(400).send({ error: "Password is too short" });
   }
-  const hashedPassword = await hashPassword(password);
-  const newUser = new UserModel({
-    email: lowerEmail,
-    password: hashedPassword,
-    role: role.toLowerCase(),
-  });
+  const hashedPassword = await hashPassword(value.password);
   try {
+    // Create new user
+    const newUser = new UserModel({
+      userProfile: {
+        email: value.email,
+        password: hashedPassword,
+        role: value.role.toLowerCase(),
+      },
+    });
     await UserModel.create(newUser);
     return reply.code(201).send({ message: "User created successfully" });
   } catch (err) {

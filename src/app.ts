@@ -10,6 +10,7 @@ import productRoutes from "./services/product/product.routes";
 import categoryRoutes from "./services/category/category.routes";
 import authRoutes from "./services/auth/auth.routes";
 import orderRoutes from "./services/order/order.routes";
+import addressRoutes from "./services/address/address.routes";
 
 const server: FastifyInstance = Fastify();
 
@@ -23,6 +24,7 @@ server.register(categoryRoutes, {
   prefix: `${process.env.API_URL}/categories`,
 });
 server.register(orderRoutes, { prefix: `${process.env.API_URL}/orders` });
+server.register(addressRoutes, { prefix: `${process.env.API_URL}/address` });
 
 const start = async () => {
   try {

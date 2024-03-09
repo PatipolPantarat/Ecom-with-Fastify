@@ -1,4 +1,4 @@
-import fastify, { FastifyRequest, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { logger } from "../../utils/logger";
 import { UserModel } from "../../models/user.model";
 import { IUser } from "../../utils/interfaces";
@@ -11,7 +11,6 @@ import {
 import registerJoiSchema from "../../schema/auth/register.validate";
 import loginJoiSchema from "../../schema/auth/login.validate";
 import resetJoiSchema from "../../schema/auth/reset.validate";
-import { changePasswordSchema } from "./auth.schema";
 import changeJoiSchema from "../../schema/auth/change.validate";
 
 export async function loginController(
@@ -26,16 +25,13 @@ export async function loginController(
   value.email = value.email.toLowerCase();
   try {
     const user = await UserModel.findOne({
-      "userProfile.email": value.email,
+      email: value.email,
     });
     if (!user) {
       return reply.code(401).send({ error: "user not found" });
     }
     console.log("user: ", user);
-    const isMatch = await comparePassword(
-      value.password,
-      user.userProfile.password
-    );
+    const isMatch = await comparePassword(value.password, user.password);
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid password" });
     }
@@ -59,7 +55,7 @@ export async function registerController(
     value.email = value.email.toLowerCase();
 
     // Check if user already exists
-    const user = await UserModel.findOne({ "userProfile.email": value.email });
+    const user = await UserModel.findOne({ email: value.email });
     if (user) {
       return reply.code(409).send({ error: "User already exists" });
     }
@@ -69,11 +65,9 @@ export async function registerController(
 
     // Create new user
     const newUser = new UserModel({
-      userProfile: {
-        email: value.email,
-        password: hashedPassword,
-        role: "user",
-      },
+      email: value.email,
+      password: hashedPassword,
+      role: "user",
     });
     await UserModel.create(newUser);
     return reply.code(201).send({ message: "Registration successful" });
@@ -91,18 +85,17 @@ export async function resetPasswordController(
   if (error) {
     return reply.code(400).send({ error: error.details[0].message });
   }
-  const { email } = value;
-  const lowerEmail = email.toLowerCase();
+  value.email = value.email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ email: lowerEmail });
+    const user = await UserModel.findOne({ email: value.email });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
     // Generate new password
     const randomPassword = generateRandomPassword();
     // Send email with random password
-    await sendResetPassword(lowerEmail, randomPassword);
+    await sendResetPassword(value.email, randomPassword);
     // Update user's password
     user.password = await hashPassword(randomPassword);
     await user.save();
@@ -126,21 +119,20 @@ export async function changePasswordController(
   if (error) {
     return reply.code(400).send({ error: error.details[0].message });
   }
-  const { email, oldPassword, newPassword } = value;
-  const lowerEmail = email.toLowerCase();
+  value.email = value.email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ email: lowerEmail });
+    const user = await UserModel.findOne({ email: value.email });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
     // Compare old password
-    const isMatch = await comparePassword(oldPassword, user.password);
+    const isMatch = await comparePassword(value.oldPassword, user.password);
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid old password" });
     }
     // Update user's password
-    user.password = await hashPassword(newPassword);
+    user.password = await hashPassword(value.newPassword);
     await user.save();
     // Return success message
     return reply.code(200).send({

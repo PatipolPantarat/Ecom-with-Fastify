@@ -16,31 +16,30 @@ export interface IProduct extends Document {
 }
 
 export interface IUser extends Document {
-  userProfile: {
-    email: string;
-    password: string;
-    role: string;
-    fullName?: string;
-    phoneNumber?: string;
-    imageUrl?: string;
-    birthDate?: Date;
-  };
-  userAddresses?: {
-    address: string;
-    province: string;
-    district: string;
-    subdistrict: string;
-    zipCode: string;
-  }[];
-  userFavorites?: string[];
-  userCarts?: {
-    productId: string;
-    quantity: number;
-  }[];
-  userOrders?: string[];
+  _id: string;
+  email: string;
+  password: string;
+  role: string;
+  fullName: string;
+  phoneNumber: string;
+  imageUrl: string;
+  birthDate: Date;
+  addresses: IAddress[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
+}
+
+export interface IAddress extends Document {
+  _id: string;
+  userId: string;
+  name: string;
+  phone: string;
+  address: string;
+  province: string;
+  district: string;
+  subdistrict: string;
+  zipCode: string;
 }
 
 export interface ICategory extends Document {
@@ -61,6 +60,7 @@ export interface IOrder extends Document {
     price: number;
   }[];
   total_price: number;
+  shippingAddress: IAddress;
   status: string;
   createdAt: Date;
   updatedAt: Date;

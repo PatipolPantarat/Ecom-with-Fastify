@@ -16,29 +16,28 @@ export interface IProduct extends Document {
 }
 
 export interface IUser extends Document {
-  _id: string;
   userProfile: {
     email: string;
     password: string;
     role: string;
-    fullName: string;
-    phoneNumber: string;
-    imageUrl: string;
-    birthDate: Date;
+    fullName?: string;
+    phoneNumber?: string;
+    imageUrl?: string;
+    birthDate?: Date;
   };
-  userAddresses: {
+  userAddresses?: {
     address: string;
     province: string;
     district: string;
     subdistrict: string;
     zipCode: string;
   }[];
-  userFavorites: string[];
-  userCarts: {
+  userFavorites?: string[];
+  userCarts?: {
     productId: string;
     quantity: number;
   }[];
-  userOrders: string[];
+  userOrders?: string[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;

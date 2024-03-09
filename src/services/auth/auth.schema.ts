@@ -35,7 +35,7 @@ export const registerSchema = {
       },
     },
     response: {
-      200: {
+      201: {
         type: "object",
         properties: {
           message: { type: "string" },

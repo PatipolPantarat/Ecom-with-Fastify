@@ -23,20 +23,23 @@ export async function loginController(
   if (error) {
     return reply.code(400).send({ error: error.details[0].message });
   }
-  const { email, password } = value;
-  const lowerEmail = email.toLowerCase();
+  value.email = value.email.toLowerCase();
   try {
     const user = await UserModel.findOne({
-      "userProfile.email": lowerEmail,
+      "userProfile.email": value.email,
     });
     if (!user) {
       return reply.code(401).send({ error: "user not found" });
     }
-    const isMatch = await comparePassword(password, user.userProfile.password);
+    console.log("user: ", user);
+    const isMatch = await comparePassword(
+      value.password,
+      user.userProfile.password
+    );
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid password" });
     }
-    const token = generateToken({ lowerEmail });
+    const token = generateToken(value.email);
     return reply.code(200).send({ message: "Login successful", token });
   } catch (err) {
     reply.code(500).send({ error: "Login failed", err });
@@ -54,34 +57,27 @@ export async function registerController(
       return reply.code(400).send({ error: error.details[0].message });
     }
     value.email = value.email.toLowerCase();
-    console.log("value: ", value);
 
     // Check if user already exists
-    // const user = await UserModel.findOne({ email: value.email });
-    // if (user) {
-    //   return reply.code(409).send({ error: "User already exists" });
-    // }
+    const user = await UserModel.findOne({ "userProfile.email": value.email });
+    if (user) {
+      return reply.code(409).send({ error: "User already exists" });
+    }
 
     // Hash password
     const hashedPassword = await hashPassword(value.password);
 
     // Create new user
     const newUser = new UserModel({
-      // userProfile: {
-      email: value.email,
-      password: hashedPassword,
-      role: "user",
-      // },
+      userProfile: {
+        email: value.email,
+        password: hashedPassword,
+        role: "user",
+      },
     });
-    await newUser.save();
-    // await UserModel.create(newUser);
+    await UserModel.create(newUser);
     return reply.code(201).send({ message: "Registration successful" });
   } catch (err: any) {
-    if (err.code === 11000) {
-      if (err.keyPattern.email) {
-        return reply.code(409).send({ error: "Email นี้ถูกใช้งานแล้ว" });
-      }
-    }
     reply.code(500).send({ error: "Registration failed", err });
   }
 }
@@ -99,7 +95,7 @@ export async function resetPasswordController(
   const lowerEmail = email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
+    const user = await UserModel.findOne({ email: lowerEmail });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
@@ -108,7 +104,7 @@ export async function resetPasswordController(
     // Send email with random password
     await sendResetPassword(lowerEmail, randomPassword);
     // Update user's password
-    user.userProfile.password = await hashPassword(randomPassword);
+    user.password = await hashPassword(randomPassword);
     await user.save();
     // Return success message
     return reply.code(200).send({
@@ -134,20 +130,17 @@ export async function changePasswordController(
   const lowerEmail = email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ "userProfile.email": lowerEmail });
+    const user = await UserModel.findOne({ email: lowerEmail });
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }
     // Compare old password
-    const isMatch = await comparePassword(
-      oldPassword,
-      user.userProfile.password
-    );
+    const isMatch = await comparePassword(oldPassword, user.password);
     if (!isMatch) {
       return reply.code(401).send({ error: "Invalid old password" });
     }
     // Update user's password
-    user.userProfile.password = await hashPassword(newPassword);
+    user.password = await hashPassword(newPassword);
     await user.save();
     // Return success message
     return reply.code(200).send({

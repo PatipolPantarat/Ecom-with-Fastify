@@ -30,7 +30,14 @@ export async function createCategoryController(
   request: FastifyRequest<{ Body: ICategory }>,
   reply: FastifyReply
 ) {
+  // Check if category already exists
+  if (await CategoryModel.findOne({ name: request.body.name })) {
+    return reply.code(409).send({
+      error: "Category already exists",
+    });
+  }
   try {
+    // Create new category
     const newCategory = new CategoryModel(request.body);
     await CategoryModel.create(newCategory);
     return reply.code(201).send(newCategory);

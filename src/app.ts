@@ -16,11 +16,13 @@ const server: FastifyInstance = Fastify();
 server.register(fastifyPlugins);
 
 // Register service routes
-server.register(authRoutes, { prefix: "/api/v1/auth" });
-server.register(userRoutes, { prefix: "/api/v1/users" });
-server.register(productRoutes, { prefix: "/api/v1/products" });
-server.register(categoryRoutes, { prefix: "/api/v1/categories" });
-server.register(orderRoutes, { prefix: "/api/v1/orders" });
+server.register(authRoutes, { prefix: `${process.env.API_URL}/auth` });
+server.register(userRoutes, { prefix: `${process.env.API_URL}/users` });
+server.register(productRoutes, { prefix: `${process.env.API_URL}/products` });
+server.register(categoryRoutes, {
+  prefix: `${process.env.API_URL}/categories`,
+});
+server.register(orderRoutes, { prefix: `${process.env.API_URL}/orders` });
 
 const start = async () => {
   try {

@@ -35,3 +35,33 @@ export const createAddressSchema = {
     },
   },
 };
+
+export const updateAddressSchema = {
+  schema: {
+    tags: ["Address"],
+    description: "Update an address",
+    body: {
+      type: "object",
+      properties: {
+        userId: { type: "string" },
+        addressId: { type: "string" },
+        name: { type: "string" },
+        phone: { type: "string" },
+        address: { type: "string" },
+        province: { type: "string" },
+        district: { type: "string" },
+        subdistrict: { type: "string" },
+        zipCode: { type: "string" },
+      },
+      required: ["userId", "addressId"],
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+        },
+      },
+    },
+  },
+};

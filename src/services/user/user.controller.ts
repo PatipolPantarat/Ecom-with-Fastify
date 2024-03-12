@@ -10,7 +10,7 @@ export async function getUsersController(
   reply: FastifyReply
 ) {
   try {
-    const users = await UserModel.find();
+    const users = await UserModel.find().populate("addresses");
     return reply.code(200).send(users);
   } catch (err) {
     reply.code(500).send({ error: "Failed to fetch user", err });
@@ -21,8 +21,17 @@ export async function getUserController(
   request: FastifyRequest<{ Params: { id: string } }>,
   reply: FastifyReply
 ) {
+  // Validate request params
+  const id = request.params.id;
+  if (!id) {
+    return reply.code(400).send({ error: "User ID is required" });
+  }
+
   try {
-    const user = await UserModel.findById(request.params.id);
+    const user = await UserModel.findById(id).populate("addresses");
+    if (!user) {
+      return reply.code(404).send({ error: "User not found" });
+    }
     return reply.code(200).send(user);
   } catch (err) {
     reply.code(500).send({ error: "Failed to fetch user", err });
@@ -30,9 +39,7 @@ export async function getUserController(
 }
 
 export async function createUserController(
-  request: FastifyRequest<{
-    Body: { email: string; password: string; role: string };
-  }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
   // Validate request body

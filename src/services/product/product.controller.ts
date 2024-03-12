@@ -9,7 +9,7 @@ export async function getProducts(
   reply: FastifyReply
 ) {
   try {
-    const products = await ProductModel.find();
+    const products = await ProductModel.find().populate("category");
     return reply.code(200).send(products);
   } catch (err) {
     reply.code(500).send({ error: "Failed to fetch products" });
@@ -29,7 +29,7 @@ export async function getProduct(
 }
 
 export async function createProduct(
-  request: FastifyRequest<{ Body: IProduct }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
   // Validate request body
@@ -49,7 +49,6 @@ export async function createProduct(
   // Create new product
   try {
     const newProduct = new ProductModel(value);
-    console.log("newProduct: ", newProduct);
     await ProductModel.create(newProduct);
     return reply.code(201).send(newProduct);
   } catch (err) {

@@ -15,7 +15,22 @@ export const getUsersSchema = {
             phoneNumber: { type: "string" },
             imageUrl: { type: "string" },
             birthDate: { type: "string" },
-            addresses: { type: "array" },
+            addresses: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  _id: { type: "string" },
+                  name: { type: "string" },
+                  phone: { type: "string" },
+                  address: { type: "string" },
+                  province: { type: "string" },
+                  district: { type: "string" },
+                  subdistrict: { type: "string" },
+                  zipCode: { type: "string" },
+                },
+              },
+            },
             createdAt: { type: "string" },
             updatedAt: { type: "string" },
             isDeleted: { type: "boolean" },

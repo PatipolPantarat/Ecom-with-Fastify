@@ -1,13 +1,20 @@
 import { FastifyInstance } from "fastify";
-import { createAddressSchema, updateAddressSchema } from "./address.schema";
 import {
+  getAddressesSchema,
+  createAddressSchema,
+  updateAddressSchema,
+  deleteAddressSchema,
+} from "./address.schema";
+import {
+  getAddressesController,
   createAddressController,
   updateAddressController,
+  deleteAddressController,
 } from "./address.controller";
 
 async function routes(fastify: FastifyInstance) {
-  // GET /get-addresses - Get all addresses
-  // fastify.get("/get-addresses", createAddressSchema, createAddressController);
+  // GET /get-addresses - Get all addresses by user id
+  fastify.get("/get-addresses/:id", getAddressesSchema, getAddressesController);
 
   // POST /create-address - Create a new address
   fastify.post("/create-address", createAddressSchema, createAddressController);
@@ -19,8 +26,12 @@ async function routes(fastify: FastifyInstance) {
     updateAddressController
   );
 
-  // DELETE /delete-address - Delete an address
-  // fastify.delete("/delete-address", createAddressSchema, createAddressController);
+  // DELETE /delete-address - Delete an address by id
+  fastify.delete(
+    "/delete-address",
+    deleteAddressSchema,
+    deleteAddressController
+  );
 }
 
 export default routes;

@@ -13,7 +13,12 @@ export const getProductsSchema = {
             description: { type: "string" },
             price: { type: "number" },
             category: {
-              type: "string",
+              type: "object",
+              properties: {
+                _id: { type: "string" },
+                name: { type: "string" },
+                status: { type: "string" },
+              },
             },
             stock: { type: "number" },
             sold: { type: "number" },

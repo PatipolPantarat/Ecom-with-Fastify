@@ -39,6 +39,7 @@ export const registerSchema = {
         type: "object",
         properties: {
           message: { type: "string" },
+          token: { type: "string" },
         },
       },
     },

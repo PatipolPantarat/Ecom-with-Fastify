@@ -5,6 +5,7 @@ import {
   createOrderSchema,
   updateOrderSchema,
   deleteOrderSchema,
+  changeStatusOrderSchema,
 } from "./order.schema";
 import {
   getOrdersController,
@@ -12,23 +13,31 @@ import {
   createOrderController,
   updateOrderController,
   deleteOrderController,
+  changeStatusOrdersController,
 } from "./order.controller";
 
 async function routes(fastify: FastifyInstance) {
   // GET /orders - List all orders
-  fastify.get("/orders", getOrdersSchema, getOrdersController);
+  fastify.get("/", getOrdersSchema, getOrdersController);
 
   // GET /orders/:id - Get a single order
-  fastify.get("/orders/:id", getOrderSchema, getOrderController);
+  fastify.get("/:id", getOrderSchema, getOrderController);
 
   // POST /orders - Create a new order
-  fastify.post("/orders", createOrderSchema, createOrderController);
+  fastify.post("/", createOrderSchema, createOrderController);
 
-  // PUT /orders/:id - Update a order
-  fastify.patch("/orders/:id", updateOrderSchema, updateOrderController);
+  // PATCH /orders/:id - Update a order
+  // fastify.patch("/:id", updateOrderSchema, updateOrderController);
 
   // DELETE /orders/:id - Delete a order
-  fastify.delete("/orders/:id", deleteOrderSchema, deleteOrderController);
+  fastify.delete("/:id", deleteOrderSchema, deleteOrderController);
+
+  // PATCH /orders - Change order status
+  fastify.patch(
+    "/change-status",
+    changeStatusOrderSchema,
+    changeStatusOrdersController
+  );
 }
 
 export default routes;

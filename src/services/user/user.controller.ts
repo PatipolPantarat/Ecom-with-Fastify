@@ -10,7 +10,7 @@ export async function getUsersController(
   reply: FastifyReply
 ) {
   try {
-    const users = await UserModel.find().populate("addresses");
+    const users = await UserModel.find();
     return reply.code(200).send(users);
   } catch (err) {
     reply.code(500).send({ error: "Failed to fetch user", err });
@@ -28,7 +28,9 @@ export async function getUserController(
   }
 
   try {
-    const user = await UserModel.findById(id).populate("addresses");
+    const user = await UserModel.findById(id)
+      .populate("addresses")
+      .populate("orders");
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }

@@ -3,16 +3,14 @@ import { IOrder } from "../utils/interfaces";
 
 const orderSchema: Schema = new mongoose.Schema({
   userId: {
-    // type: mongoose.Schema.Types.ObjectId,
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
   products: [
     {
       productId: {
-        // type: mongoose.Schema.Types.ObjectId,
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Product",
         required: true,
       },

@@ -29,7 +29,7 @@ server.register(addressRoutes, { prefix: `${process.env.API_URL}/address` });
 const start = async () => {
   try {
     await server.ready();
-    await server.listen({ port: 3000 });
+    await server.listen({ port: 3000, host: "0.0.0.0" });
     const address = server.server.address();
     const port = typeof address === "string" ? address : address?.port;
     logger.info(`Server is now listening on http://localhost:${port}`);

@@ -25,6 +25,7 @@ export interface IUser extends Document {
   imageUrl: string;
   birthDate: Date;
   addresses: IAddress[];
+  orders: IOrder[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;

@@ -20,6 +20,12 @@ const userSchema: Schema = new mongoose.Schema({
       ref: "Address",
     },
   ],
+  orders: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+  ],
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
   isDeleted: { type: Boolean, default: false },

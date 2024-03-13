@@ -14,7 +14,7 @@ import resetJoiSchema from "../../schema/auth/reset.validate";
 import changeJoiSchema from "../../schema/auth/change.validate";
 
 export async function loginController(
-  request: FastifyRequest<{ Body: { email: string; password: string } }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
   // Validate request body
@@ -30,11 +30,12 @@ export async function loginController(
     if (!user) {
       return reply.code(401).send({ error: "user not found" });
     }
-    console.log("user: ", user);
     const isMatch = await comparePassword(value.password, user.password);
     if (!isMatch) {
+      logger.error(`User ${user.email} failed to login`);
       return reply.code(401).send({ error: "Invalid password" });
     }
+    logger.info(`User ${user.email} logged in successfully`);
     const token = generateToken(value.email);
     return reply.code(200).send({ message: "Login successful", token });
   } catch (err) {
@@ -70,7 +71,9 @@ export async function registerController(
       role: "user",
     });
     await UserModel.create(newUser);
-    return reply.code(201).send({ message: "Registration successful" });
+    // Generate token
+    const token = generateToken(value.email);
+    return reply.code(201).send({ message: "Registration successful", token });
   } catch (err: any) {
     reply.code(500).send({ error: "Registration failed", err });
   }

@@ -147,3 +147,25 @@ export const deleteOrderSchema = {
     },
   },
 };
+
+export const changeStatusOrderSchema = {
+  schema: {
+    tags: ["Order"],
+    description: "Change status of a order",
+    body: {
+      type: "object",
+      properties: {
+        orderId: { type: "string" },
+        status: { type: "string" },
+      },
+    },
+    response: {
+      200: {
+        type: "object",
+        properties: {
+          message: { type: "string" },
+        },
+      },
+    },
+  },
+};

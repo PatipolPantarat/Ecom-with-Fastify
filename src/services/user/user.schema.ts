@@ -55,7 +55,48 @@ export const getUserSchema = {
           phoneNumber: { type: "string" },
           imageUrl: { type: "string" },
           birthDate: { type: "string" },
-          addresses: { type: "array" },
+          addresses: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                _id: { type: "string" },
+                name: { type: "string" },
+                phone: { type: "string" },
+                address: { type: "string" },
+                province: { type: "string" },
+                district: { type: "string" },
+                subdistrict: { type: "string" },
+                zipCode: { type: "string" },
+              },
+            },
+          },
+          orders: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                _id: { type: "string" },
+                userId: { type: "string" },
+                products: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      productId: { type: "string" },
+                      quantity: { type: "number" },
+                      price: { type: "number" },
+                    },
+                  },
+                },
+                total_price: { type: "number" },
+                status: { type: "string" },
+                createdAt: { type: "string" },
+                updatedAt: { type: "string" },
+                isDeleted: { type: "boolean" },
+              },
+            },
+          },
           createdAt: { type: "string" },
           updatedAt: { type: "string" },
           isDeleted: { type: "boolean" },

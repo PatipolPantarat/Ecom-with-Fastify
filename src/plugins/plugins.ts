@@ -20,9 +20,9 @@ async function dbConnector() {
 
 export default fastifyPlugin(async (fastify) => {
   // Register MongoDB / Mongoose
-  fastify.register(dbConnector);
+  await fastify.register(dbConnector);
   // Register Swagger UI
-  fastify.register(require("@fastify/swagger"), {
+  await fastify.register(require("@fastify/swagger"), {
     swagger: {
       info: {
         title: "Ecom API",
@@ -40,15 +40,15 @@ export default fastifyPlugin(async (fastify) => {
       produces: ["application/json"],
     },
   });
-  fastify.register(require("@fastify/swagger-ui"), {
+  await fastify.register(require("@fastify/swagger-ui"), {
     routePrefix: "/api-docs",
   });
   // Register JWT
-  fastify.register(require("@fastify/jwt"), {
+  await fastify.register(require("@fastify/jwt"), {
     secret: process.env.JWT_SECRET,
   });
   // Register CORS
-  // fastify.register(require("@fastify/cors"), {
-  //   origin: "*",
-  // });
+  await fastify.register(require("@fastify/cors"), {
+    origin: ["http://localhost:5173"],
+  });
 });

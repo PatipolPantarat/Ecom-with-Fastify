@@ -2,7 +2,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 import { logger } from "../../utils/logger";
 import { UserModel } from "../../models/user.model";
 import { IUser } from "../../utils/interfaces";
-import { generateToken } from "../../utils/jwt";
+import { verifyToken, generateToken } from "../../utils/jwt";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import {
   generateRandomPassword,
@@ -12,6 +12,33 @@ import registerJoiSchema from "../../schema/auth/register.validate";
 import loginJoiSchema from "../../schema/auth/login.validate";
 import resetJoiSchema from "../../schema/auth/reset.validate";
 import changeJoiSchema from "../../schema/auth/change.validate";
+
+export async function meController(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  // Get token
+  const token = request.headers.authorization;
+  if (!token || !token.startsWith("Bearer ")) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+  // Verify token
+  const decoded = verifyToken(token.split(" ")[1]);
+  if (!decoded) {
+    return reply.code(401).send({ error: "Invalid token" });
+  }
+  // Find user
+  try {
+    const user = await UserModel.findOne({ _id: decoded.id });
+    if (!user) {
+      return reply.code(404).send({ error: "User not found" });
+    }
+    return reply.code(200).send(user);
+  } catch (err) {
+    logger.error(err);
+    return reply.code(500).send({ error: "Internal server error" });
+  }
+}
 
 export async function loginController(
   request: FastifyRequest,
@@ -36,7 +63,7 @@ export async function loginController(
       return reply.code(401).send({ error: "Invalid password" });
     }
     logger.info(`User ${user.email} logged in successfully`);
-    const token = generateToken(value.email);
+    const token = generateToken(user._id);
     return reply.code(200).send({ message: "Login successful", token });
   } catch (err) {
     reply.code(500).send({ error: "Login failed", err });
@@ -112,20 +139,29 @@ export async function resetPasswordController(
 }
 
 export async function changePasswordController(
-  request: FastifyRequest<{
-    Body: { email: string; oldPassword: string; newPassword: string };
-  }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
+  // Get token
+  const token = request.headers.authorization;
+  if (!token || !token.startsWith("Bearer ")) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+  console.log(token);
+  // Verify token
+  const decoded = verifyToken(token.split(" ")[1]);
+  if (!decoded) {
+    return reply.code(401).send({ error: "Invalid token" });
+  }
+  console.log(decoded);
   // Validate request body
   const { value, error } = changeJoiSchema.validate(request.body);
   if (error) {
     return reply.code(400).send({ error: error.details[0].message });
   }
-  value.email = value.email.toLowerCase();
   try {
     // Find user by email
-    const user = await UserModel.findOne({ email: value.email });
+    const user = await UserModel.findById(decoded.id);
     if (!user) {
       return reply.code(404).send({ error: "User not found" });
     }

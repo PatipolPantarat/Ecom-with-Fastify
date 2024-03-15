@@ -14,7 +14,6 @@ export const getUsersSchema = {
             fullName: { type: "string" },
             phoneNumber: { type: "string" },
             imageUrl: { type: "string" },
-            birthDate: { type: "string" },
             addresses: {
               type: "array",
               items: {
@@ -54,7 +53,6 @@ export const getUserSchema = {
           fullName: { type: "string" },
           phoneNumber: { type: "string" },
           imageUrl: { type: "string" },
-          birthDate: { type: "string" },
           addresses: {
             type: "array",
             items: {
@@ -134,10 +132,19 @@ export const updateUserSchema = {
   schema: {
     description: "Update a user",
     tags: ["User"],
+    headers: {
+      type: "object",
+      properties: {
+        authorization: { type: "string" },
+      },
+      required: ["authorization"],
+    },
     body: {
       type: "object",
       properties: {
-        role: { type: "string" },
+        fullName: { type: "string" },
+        phoneNumber: { type: "string" },
+        imageUrl: { type: "string" },
       },
     },
     response: {

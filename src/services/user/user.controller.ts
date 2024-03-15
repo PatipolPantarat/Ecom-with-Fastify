@@ -4,6 +4,8 @@ import { UserModel } from "../../models/user.model";
 import { hashPassword, comparePassword } from "../../utils/bcrypt";
 import { logger } from "../../utils/logger";
 import createUserJoiSchema from "../../schema/user/create.validate";
+import { verifyToken } from "../../utils/jwt";
+import updateUserJoiSchema from "../../schema/user/update.validate";
 
 export async function getUsersController(
   request: FastifyRequest,
@@ -75,11 +77,27 @@ export async function createUserController(
 }
 
 export async function updateUserController(
-  request: FastifyRequest<{ Params: { id: string }; Body: IUser }>,
+  request: FastifyRequest,
   reply: FastifyReply
 ) {
+  // Get token
+  const token = request.headers.authorization;
+  if (!token || !token.startsWith("Bearer ")) {
+    return reply.code(401).send({ error: "Unauthorized" });
+  }
+  // Verify token
+  const decoded = verifyToken(token.split(" ")[1]);
+  if (!decoded) {
+    return reply.code(401).send({ error: "Invalid token" });
+  }
+  // Validate request body
+  const { value, error } = updateUserJoiSchema.validate(request.body);
+  if (error) {
+    return reply.code(400).send({ error: error.details[0].message });
+  }
+  // Update user
   try {
-    await UserModel.findByIdAndUpdate(request.params.id, request.body);
+    await UserModel.findByIdAndUpdate(decoded.id, value);
     return reply.code(200).send({
       message: "User updated successfully",
     });

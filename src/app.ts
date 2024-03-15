@@ -35,6 +35,7 @@ const start = async () => {
     logger.info(`Server is now listening on http://localhost:${port}`);
   } catch (err) {
     logger.error("Failed to start server", err);
+    server.log.error(err);
     process.exit(1);
   }
 };

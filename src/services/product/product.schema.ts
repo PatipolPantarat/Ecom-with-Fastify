@@ -1,7 +1,15 @@
+import { required } from "joi";
+
 export const getProductsSchema = {
   schema: {
     tags: ["Product"],
     description: "Get a list of products",
+    querystring: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+      },
+    },
     response: {
       200: {
         type: "array",
@@ -38,6 +46,13 @@ export const getProductSchema = {
   schema: {
     tags: ["Product"],
     description: "Get a single product",
+    params: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+      },
+      required: ["id"],
+    },
     response: {
       200: {
         type: "object",
@@ -118,6 +133,13 @@ export const updateProductSchema = {
   schema: {
     tags: ["Product"],
     description: "Update a product",
+    params: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+      },
+      required: ["id"],
+    },
     body: {
       type: "object",
       properties: {
@@ -148,6 +170,13 @@ export const deleteProductSchema = {
   schema: {
     tags: ["Product"],
     description: "Delete a product",
+    params: {
+      type: "object",
+      properties: {
+        id: { type: "string" },
+      },
+      required: ["id"],
+    },
     response: {
       200: {
         type: "object",

@@ -1,11 +1,13 @@
 import { FastifyInstance } from "fastify";
 import {
+  meSchema,
   loginSchema,
   registerSchema,
   resetPasswordSchema,
   changePasswordSchema,
 } from "./auth.schema";
 import {
+  meController,
   loginController,
   registerController,
   resetPasswordController,
@@ -13,6 +15,9 @@ import {
 } from "./auth.controller";
 
 async function routes(fastify: FastifyInstance) {
+  // GET /me - Get current user
+  fastify.get("/me", meSchema, meController);
+
   // POST /register - Register a new user
   fastify.post("/register", registerSchema, registerController);
 
@@ -22,8 +27,8 @@ async function routes(fastify: FastifyInstance) {
   // POST /reset-password - Reset password
   fastify.post("/reset-password", resetPasswordSchema, resetPasswordController);
 
-  // POST /change-password - Change password
-  fastify.post(
+  // PUT /change-password - Change password
+  fastify.put(
     "/change-password",
     changePasswordSchema,
     changePasswordController

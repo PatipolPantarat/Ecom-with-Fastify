@@ -47,6 +47,14 @@ export default fastifyPlugin(async (fastify) => {
   await fastify.register(require("@fastify/jwt"), {
     secret: process.env.JWT_SECRET,
   });
+  fastify.decorate("authenticate", async (request: any, reply: any) => {
+    try {
+      await request.jwtVerify();
+    } catch (err) {
+      reply.send(err);
+    }
+  });
+
   // Register CORS
   await fastify.register(require("@fastify/cors"), {
     origin: ["http://localhost:5173"],

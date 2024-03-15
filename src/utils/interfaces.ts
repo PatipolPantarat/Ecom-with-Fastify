@@ -21,11 +21,12 @@ export interface IUser extends Document {
   password: string;
   role: string;
   fullName: string;
+  birthDate: Date;
   phoneNumber: string;
   imageUrl: string;
-  birthDate: Date;
-  addresses: IAddress[];
-  orders: IOrder[];
+  favorites: string[];
+  addresses: string[];
+  orders: string[];
   createdAt: Date;
   updatedAt: Date;
   isDeleted: boolean;
@@ -41,6 +42,8 @@ export interface IAddress extends Document {
   district: string;
   subdistrict: string;
   zipCode: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ICategory extends Document {
